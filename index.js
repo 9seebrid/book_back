@@ -28,6 +28,11 @@ const pool = new Pool({
   port: process.env.DB_PORT || 5432,
 });
 
+app.get('/', (req, res) => {
+    res.send('Hello World! movie-back');
+  });
+  
+
 // 책 정보 조회 엔드포인트
 app.get('/books', async (req, res) => {
   try {
