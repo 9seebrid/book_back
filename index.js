@@ -1,32 +1,47 @@
 const express = require('express');
+const { Pool } = require('pg');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const app = express();
+
 dotenv.config();
 
-const app = express();
 const PORT = process.env.PORT || 8002;
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://222.112.27.120:3000' // 외부 IP
-];
+const API_URL = process.env.API_URL || 'http://localhost:3000';
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-}));
+// CORS 설정
+app.use(
+  cors({
+    origin: API_URL, // 요청을 허용할 클라이언트 URL
+    credentials: true, // 쿠키나 인증 정보를 허용하려면 true로 설정
+  })
+);
 
-// 나머지 코드
-app.get('/books', (req, res) => {
-  // 데이터베이스에서 책 정보 가져오기
-  res.json([
-    { book_id: 1, book_title: "예제 책", book_author: "저자", isbn: "1234567890", book_genre: "소설", book_price: 15000, book_link: "#" }
-  ]);
+app.use(express.json());
+
+// PostgreSQL 데이터베이스 연결 설정
+const pool = new Pool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT || 5432,
+});
+
+app.get('/', (req, res) => {
+    res.send('Hello World! movie-back');
+  });
+  
+
+// 책 정보 조회 엔드포인트
+app.get('/books', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT book_id, book_title, book_author, isbn FROM book LIMIT 5');
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error('DB 쿼리 오류:', error);
+    res.status(500).json({ error: '데이터베이스 오류' });
+  }
 });
 
 app.listen(PORT, () => {
