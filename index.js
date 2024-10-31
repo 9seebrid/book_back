@@ -11,11 +11,11 @@ const API_URL = process.env.API_URL || 'http://localhost:3000';
 
 // CORS 설정
 app.use(
-  cors({
-    origin: API_URL, // 요청을 허용할 클라이언트 URL
-    credentials: true, // 쿠키나 인증 정보를 허용하려면 true로 설정
-  })
-);
+    cors({
+      origin: [process.env.API_URL, 'http://localhost:3000'], // 외부와 로컬 호스트 둘 다 허용
+      credentials: true,
+    })
+  );
 
 app.use(express.json());
 
