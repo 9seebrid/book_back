@@ -29,7 +29,7 @@ const pool = new Pool({
 });
 
 app.get('/', (req, res) => {
-    res.send('Hello World! movie-back!!!');
+    res.send('Hello World! movie-back!!');
   });
   
 
