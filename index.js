@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
 // 책 정보 조회 엔드포인트
 app.get('/books', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT book_id, book_title, book_author, isbn FROM book LIMIT 5');
+    const { rows } = await pool.query('SELECT book_id, book_title, book_author, isbn, book_price, book_genre FROM book LIMIT 5');
     res.status(200).json(rows);
   } catch (error) {
     console.error('DB 쿼리 오류:', error);
